@@ -66,6 +66,7 @@ public class PrestamoController {
     public List<Prestamo> obtenerTodosLosPrestamos() {
         return prestamoService.obtenerTodosLosPrestamos();
     }
+
     @GetMapping("/{id}")
     public ResponseEntity<Prestamo> obtenerPrestamoPorId(@PathVariable Long id) {
         Optional<Prestamo> prestamoOptional = prestamoService.obtenerPrestamoPorId(id);
@@ -74,6 +75,19 @@ public class PrestamoController {
                 .map(prestamo -> ResponseEntity.ok(prestamo))
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
+
+    @GetMapping("/usuario/{usuarioId}")
+    public ResponseEntity<List<Prestamo>> obtenerPrestamosPorUsuario(@PathVariable Long usuarioId) {
+        List<Prestamo> prestamos = prestamoService.obtenerPrestamosPorUsuario(usuarioId);
+        return ResponseEntity.ok(prestamos);
+    }
+
+    @GetMapping("/libro/{libroId}")
+    public ResponseEntity<List<Prestamo>> obtenerPrestamosPorLibro(@PathVariable Long libroId) {
+        List<Prestamo> prestamos = prestamoService.obtenerPrestamosPorLibro(libroId);
+        return ResponseEntity.ok(prestamos);
+    }
+
 
 
 }
