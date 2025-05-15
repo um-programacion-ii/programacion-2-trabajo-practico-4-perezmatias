@@ -2,13 +2,14 @@ package com.biblioteca.sistemagestion.servicios;
 
 import com.biblioteca.sistemagestion.modelo.Libro;
 import com.biblioteca.sistemagestion.excepciones.LibroNoEncontradoException;
+import com.biblioteca.sistemagestion.excepciones.RecursoDuplicadoException;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface LibroService {
 
-    Libro crearLibro(Libro libro);
+    Libro crearLibro(Libro libro) throws RecursoDuplicadoException;
 
     Optional<Libro> obtenerLibroPorId(Long id);
 
