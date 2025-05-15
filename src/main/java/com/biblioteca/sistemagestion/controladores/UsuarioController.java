@@ -16,6 +16,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.net.URI;
 import com.biblioteca.sistemagestion.excepciones.RecursoDuplicadoException;
+import org.springframework.web.bind.annotation.PutMapping;
+import com.biblioteca.sistemagestion.excepciones.UsuarioNoEncontradoException;
 
 @RestController
 @RequestMapping("/api/usuarios")
@@ -51,6 +53,20 @@ public class UsuarioController {
                     .buildAndExpand(usuarioCreado.getId())
                     .toUri();
             return ResponseEntity.created(location).body(usuarioCreado);
+        } catch (RecursoDuplicadoException e) {
+            throw e;
+        } catch (IllegalArgumentException e) {
+            throw e;
+        }
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Usuario> actualizarUsuario(@PathVariable Long id, @RequestBody Usuario usuarioDetails) {
+        try {
+            Usuario usuarioActualizado = usuarioService.actualizarUsuario(id, usuarioDetails);
+            return ResponseEntity.ok(usuarioActualizado); // HTTP 200 OK
+        } catch (UsuarioNoEncontradoException e) {
+            throw e;
         } catch (RecursoDuplicadoException e) {
             throw e;
         } catch (IllegalArgumentException e) {

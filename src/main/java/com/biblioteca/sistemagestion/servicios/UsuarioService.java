@@ -17,7 +17,7 @@ public interface UsuarioService {
 
     List<Usuario> obtenerTodosLosUsuarios();
 
-    Usuario actualizarUsuario(Long id, Usuario usuarioDetails) throws UsuarioNoEncontradoException;
+    Usuario actualizarUsuario(Long id, Usuario usuarioDetails) throws UsuarioNoEncontradoException, RecursoDuplicadoException;
 
     void eliminarUsuario(Long id) throws UsuarioNoEncontradoException;
 }
