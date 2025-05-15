@@ -6,6 +6,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.biblioteca.sistemagestion.modelo.Libro;
 import org.springframework.web.bind.annotation.GetMapping;
 import java.util.List;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
+import java.util.Optional;
 
 import java.util.Objects;
 
@@ -24,6 +27,18 @@ public class LibroController {
     public List<Libro> obtenerTodos() {
 
         return libroService.obtenerTodosLosLibros();
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Libro> obtenerLibroPorId(@PathVariable Long id) {
+        Optional<Libro> libroOptional = libroService.obtenerLibroPorId(id);
+
+        if (libroOptional.isPresent()) {
+            return ResponseEntity.ok(libroOptional.get());
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+
     }
 
 }
