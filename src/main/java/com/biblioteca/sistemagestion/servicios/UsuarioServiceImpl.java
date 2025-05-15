@@ -22,16 +22,22 @@ public class UsuarioServiceImpl implements UsuarioService {
     }
 
     @Override
-    public Usuario crearUsuario(Usuario usuario) {
+    public Usuario crearUsuario(Usuario usuario) throws RecursoDuplicadoException, IllegalArgumentException {
         Objects.requireNonNull(usuario, "Los detalles del usuario no pueden ser nulos.");
+        Objects.requireNonNull(usuario.getNombre(), "El nombre del usuario no puede ser nulo.");
+        Objects.requireNonNull(usuario.getEmail(), "El email del usuario no puede ser nulo.");
         if (usuario.getId() != null) {
             throw new IllegalArgumentException("El ID debe ser nulo para un nuevo usuario.");
         }
-
-        if (usuario.getEmail() != null && usuarioRepository.findByEmail(usuario.getEmail()).isPresent()) {
+        if (usuario.getNombre().trim().isEmpty()) {
+            throw new IllegalArgumentException("El nombre del usuario no puede estar vacío.");
+        }
+        if (usuario.getEmail().trim().isEmpty()) {
+            throw new IllegalArgumentException("El email del usuario no puede estar vacío.");
+        }
+        if (usuarioRepository.findByEmail(usuario.getEmail()).isPresent()) {
             throw new RecursoDuplicadoException("El email '" + usuario.getEmail() + "' ya está registrado.");
         }
-
         if (usuario.getEstado() == null) {
             usuario.setEstado(EstadoUsuario.ACTIVO);
         }
