@@ -15,6 +15,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.net.URI;
 import com.biblioteca.sistemagestion.excepciones.RecursoDuplicadoException;
+import org.springframework.web.bind.annotation.PutMapping;
+import com.biblioteca.sistemagestion.excepciones.LibroNoEncontradoException;
 
 import java.util.Objects;
 
@@ -65,6 +67,19 @@ public class LibroController {
         } catch (IllegalArgumentException e) {
             throw e;
         }
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Libro> actualizarLibro(@PathVariable Long id, @RequestBody Libro libroDetails) {
+        try {
+            Libro libroActualizado = libroService.actualizarLibro(id, libroDetails);
+            return ResponseEntity.ok(libroActualizado);
+        } catch (LibroNoEncontradoException e) {
+            throw e;
+        } catch (RecursoDuplicadoException e) {
+            throw e; // Relanzamos
+        }
+
     }
 
 }
