@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.net.URI;
 import java.time.LocalDate;
+import org.springframework.web.bind.annotation.PathVariable;
+import com.biblioteca.sistemagestion.excepciones.PrestamoNoEncontradoException;
 
 @RestController
 @RequestMapping("/api/prestamos")
@@ -43,6 +45,18 @@ public class PrestamoController {
                 .toUri();
 
         return ResponseEntity.created(location).body(prestamoCreado);
+    }
+
+    @PostMapping("/{prestamoId}/devolver")
+    public ResponseEntity<Prestamo> registrarDevolucion(@PathVariable Long prestamoId) {
+        try {
+            Prestamo prestamoDevuelto = prestamoService.registrarDevolucion(prestamoId);
+            return ResponseEntity.ok(prestamoDevuelto);
+        } catch (PrestamoNoEncontradoException e) {
+            throw e;
+        } catch (IllegalStateException e) {
+            throw e;
+        }
     }
 
 
