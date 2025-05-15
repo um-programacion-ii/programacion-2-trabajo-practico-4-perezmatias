@@ -9,7 +9,7 @@ import java.util.Optional;
 
 public interface LibroService {
 
-    Libro crearLibro(Libro libro) throws RecursoDuplicadoException;
+    Libro crearLibro(Libro libro) throws RecursoDuplicadoException, IllegalArgumentException;
 
     Optional<Libro> obtenerLibroPorId(Long id);
 

@@ -22,12 +22,24 @@ public class LibroServiceImpl implements LibroService {
     }
 
     @Override
-    public Libro crearLibro(Libro libro) {
+    public Libro crearLibro(Libro libro) throws RecursoDuplicadoException, IllegalArgumentException {
         Objects.requireNonNull(libro, "Los detalles del libro no pueden ser nulos.");
         if (libro.getId() != null) {
             throw new IllegalArgumentException("El ID debe ser nulo para un nuevo libro, es autogenerado.");
         }
-        if (libro.getIsbn() != null && libroRepository.findByIsbn(libro.getIsbn()).isPresent()) {
+        Objects.requireNonNull(libro.getIsbn(), "El ISBN no puede ser nulo.");
+        Objects.requireNonNull(libro.getTitulo(), "El título no puede ser nulo.");
+        Objects.requireNonNull(libro.getAutor(), "El autor no puede ser nulo.");
+        if (libro.getIsbn().trim().isEmpty()) {
+            throw new IllegalArgumentException("El ISBN no puede estar vacío.");
+        }
+        if (libro.getTitulo().trim().isEmpty()) {
+            throw new IllegalArgumentException("El título no puede estar vacío.");
+        }
+        if (libro.getAutor().trim().isEmpty()) {
+            throw new IllegalArgumentException("El autor no puede estar vacío.");
+        }
+        if (libroRepository.findByIsbn(libro.getIsbn()).isPresent()) {
             throw new RecursoDuplicadoException("Ya existe un libro con el ISBN: " + libro.getIsbn());
         }
         if (libro.getEstado() == null) {
