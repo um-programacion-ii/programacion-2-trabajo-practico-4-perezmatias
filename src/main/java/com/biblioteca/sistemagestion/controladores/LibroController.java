@@ -3,6 +3,9 @@ package com.biblioteca.sistemagestion.controladores;
 import com.biblioteca.sistemagestion.servicios.LibroService;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import com.biblioteca.sistemagestion.modelo.Libro;
+import org.springframework.web.bind.annotation.GetMapping;
+import java.util.List;
 
 import java.util.Objects;
 
@@ -15,6 +18,12 @@ public class LibroController {
 
     public LibroController(LibroService libroService) {
         this.libroService = Objects.requireNonNull(libroService, "LibroService no puede ser nulo.");
+    }
+
+    @GetMapping
+    public List<Libro> obtenerTodos() {
+
+        return libroService.obtenerTodosLosLibros();
     }
 
 }
