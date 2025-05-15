@@ -51,46 +51,23 @@ public class LibroController {
     }
 
     @PostMapping
-    public ResponseEntity<?> crearLibro(@RequestBody Libro libro) {
-        try {
-            Libro libroCreado = libroService.crearLibro(libro);
-
-            URI location = ServletUriComponentsBuilder
-                    .fromCurrentRequest()
-                    .path("/{id}")
-                    .buildAndExpand(libroCreado.getId())
-                    .toUri();
-
-            return ResponseEntity.created(location).body(libroCreado);
-
-        } catch (RecursoDuplicadoException e) {
-            throw e;
-        } catch (IllegalArgumentException e) {
-            throw e;
-        }
+    public ResponseEntity<Libro> crearLibro(@RequestBody Libro libro) {
+        Libro libroCreado = libroService.crearLibro(libro);
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentRequest().path("/{id}")
+                .buildAndExpand(libroCreado.getId()).toUri();
+        return ResponseEntity.created(location).body(libroCreado);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Libro> actualizarLibro(@PathVariable Long id, @RequestBody Libro libroDetails) {
-        try {
-            Libro libroActualizado = libroService.actualizarLibro(id, libroDetails);
-            return ResponseEntity.ok(libroActualizado);
-        } catch (LibroNoEncontradoException e) {
-            throw e;
-        } catch (RecursoDuplicadoException e) {
-            throw e;
-        }
+        Libro libroActualizado = libroService.actualizarLibro(id, libroDetails);
+        return ResponseEntity.ok(libroActualizado);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminarLibro(@PathVariable Long id) {
-        try {
-            libroService.eliminarLibro(id);
-            return ResponseEntity.noContent().build();
-        } catch (LibroNoEncontradoException e) {
-            throw e;
-        }
+        libroService.eliminarLibro(id);
+        return ResponseEntity.noContent().build();
     }
-
-
 }

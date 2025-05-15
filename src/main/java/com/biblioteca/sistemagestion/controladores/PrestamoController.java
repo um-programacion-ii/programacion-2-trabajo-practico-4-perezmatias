@@ -1,25 +1,21 @@
 package com.biblioteca.sistemagestion.controladores;
 
-import com.biblioteca.sistemagestion.servicios.PrestamoService;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import java.util.Objects;
 import com.biblioteca.sistemagestion.dtos.PrestamoRequestDTO;
 import com.biblioteca.sistemagestion.modelo.Prestamo;
+import com.biblioteca.sistemagestion.servicios.PrestamoService;
 import com.biblioteca.sistemagestion.excepciones.LibroNoEncontradoException;
 import com.biblioteca.sistemagestion.excepciones.UsuarioNoEncontradoException;
 import com.biblioteca.sistemagestion.excepciones.RecursoNoDisponibleException;
-import org.springframework.http.ResponseEntity;
+import com.biblioteca.sistemagestion.excepciones.PrestamoNoEncontradoException;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
 import java.net.URI;
 import java.time.LocalDate;
-import org.springframework.web.bind.annotation.PathVariable;
-import com.biblioteca.sistemagestion.excepciones.PrestamoNoEncontradoException;
-import org.springframework.web.bind.annotation.GetMapping;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @RestController
@@ -33,33 +29,24 @@ public class PrestamoController {
     }
 
     @PostMapping
-    public ResponseEntity<Prestamo> realizarPrestamo(@RequestBody PrestamoRequestDTO requestDTO) {
-
+    public ResponseEntity<Prestamo> realizarPrestamo(@RequestBody PrestamoRequestDTO requestDTO)
+            throws LibroNoEncontradoException, UsuarioNoEncontradoException, RecursoNoDisponibleException, IllegalArgumentException {
         Prestamo prestamoCreado = prestamoService.realizarPrestamo(
                 requestDTO.libroId(),
                 requestDTO.usuarioId(),
                 requestDTO.fechaDevolucionSugerida()
         );
-
         URI location = ServletUriComponentsBuilder
-                .fromCurrentRequest()
-                .path("/{id}")
-                .buildAndExpand(prestamoCreado.getId())
-                .toUri();
-
+                .fromCurrentRequest().path("/{id}")
+                .buildAndExpand(prestamoCreado.getId()).toUri();
         return ResponseEntity.created(location).body(prestamoCreado);
     }
 
     @PostMapping("/{prestamoId}/devolver")
-    public ResponseEntity<Prestamo> registrarDevolucion(@PathVariable Long prestamoId) {
-        try {
-            Prestamo prestamoDevuelto = prestamoService.registrarDevolucion(prestamoId);
-            return ResponseEntity.ok(prestamoDevuelto);
-        } catch (PrestamoNoEncontradoException e) {
-            throw e;
-        } catch (IllegalStateException e) {
-            throw e;
-        }
+    public ResponseEntity<Prestamo> registrarDevolucion(@PathVariable Long prestamoId)
+            throws PrestamoNoEncontradoException, IllegalStateException {
+        Prestamo prestamoDevuelto = prestamoService.registrarDevolucion(prestamoId);
+        return ResponseEntity.ok(prestamoDevuelto);
     }
 
     @GetMapping
@@ -70,9 +57,8 @@ public class PrestamoController {
     @GetMapping("/{id}")
     public ResponseEntity<Prestamo> obtenerPrestamoPorId(@PathVariable Long id) {
         Optional<Prestamo> prestamoOptional = prestamoService.obtenerPrestamoPorId(id);
-
         return prestamoOptional
-                .map(prestamo -> ResponseEntity.ok(prestamo))
+                .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
@@ -87,7 +73,4 @@ public class PrestamoController {
         List<Prestamo> prestamos = prestamoService.obtenerPrestamosPorLibro(libroId);
         return ResponseEntity.ok(prestamos);
     }
-
-
-
 }
