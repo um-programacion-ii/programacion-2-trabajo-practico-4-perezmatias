@@ -18,6 +18,7 @@ import java.net.URI;
 import com.biblioteca.sistemagestion.excepciones.RecursoDuplicadoException;
 import org.springframework.web.bind.annotation.PutMapping;
 import com.biblioteca.sistemagestion.excepciones.UsuarioNoEncontradoException;
+import org.springframework.web.bind.annotation.DeleteMapping;
 
 @RestController
 @RequestMapping("/api/usuarios")
@@ -70,6 +71,16 @@ public class UsuarioController {
         } catch (RecursoDuplicadoException e) {
             throw e;
         } catch (IllegalArgumentException e) {
+            throw e;
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> eliminarUsuario(@PathVariable Long id) {
+        try {
+            usuarioService.eliminarUsuario(id);
+            return ResponseEntity.noContent().build();
+        } catch (UsuarioNoEncontradoException e) {
             throw e;
         }
     }
