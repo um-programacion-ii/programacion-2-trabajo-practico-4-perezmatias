@@ -18,6 +18,9 @@ import java.net.URI;
 import java.time.LocalDate;
 import org.springframework.web.bind.annotation.PathVariable;
 import com.biblioteca.sistemagestion.excepciones.PrestamoNoEncontradoException;
+import org.springframework.web.bind.annotation.GetMapping;
+import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/prestamos")
@@ -57,6 +60,19 @@ public class PrestamoController {
         } catch (IllegalStateException e) {
             throw e;
         }
+    }
+
+    @GetMapping
+    public List<Prestamo> obtenerTodosLosPrestamos() {
+        return prestamoService.obtenerTodosLosPrestamos();
+    }
+    @GetMapping("/{id}")
+    public ResponseEntity<Prestamo> obtenerPrestamoPorId(@PathVariable Long id) {
+        Optional<Prestamo> prestamoOptional = prestamoService.obtenerPrestamoPorId(id);
+
+        return prestamoOptional
+                .map(prestamo -> ResponseEntity.ok(prestamo))
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
 
