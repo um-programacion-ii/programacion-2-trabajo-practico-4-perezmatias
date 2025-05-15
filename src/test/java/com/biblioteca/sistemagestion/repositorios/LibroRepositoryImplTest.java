@@ -45,7 +45,7 @@ class LibroRepositoryImplTest {
     void save_libroExistente_actualizaDatos() {
         libroRepository.save(libro1);
         String nuevoTitulo = "Nuevo Título para Libro 1";
-        libro1.setTitulo(nuevoTitulo); // Asumimos que Libro tiene setters para esto
+        libro1.setTitulo(nuevoTitulo);
 
         Libro libroActualizado = libroRepository.save(libro1);
 
