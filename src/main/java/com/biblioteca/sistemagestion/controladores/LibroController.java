@@ -17,6 +17,7 @@ import java.net.URI;
 import com.biblioteca.sistemagestion.excepciones.RecursoDuplicadoException;
 import org.springframework.web.bind.annotation.PutMapping;
 import com.biblioteca.sistemagestion.excepciones.LibroNoEncontradoException;
+import org.springframework.web.bind.annotation.DeleteMapping;
 
 import java.util.Objects;
 
@@ -77,9 +78,19 @@ public class LibroController {
         } catch (LibroNoEncontradoException e) {
             throw e;
         } catch (RecursoDuplicadoException e) {
-            throw e; // Relanzamos
+            throw e;
         }
-
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> eliminarLibro(@PathVariable Long id) {
+        try {
+            libroService.eliminarLibro(id);
+            return ResponseEntity.noContent().build();
+        } catch (LibroNoEncontradoException e) {
+            throw e;
+        }
+    }
+
 
 }
