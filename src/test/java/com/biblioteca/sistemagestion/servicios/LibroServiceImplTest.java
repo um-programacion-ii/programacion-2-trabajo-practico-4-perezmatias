@@ -79,4 +79,52 @@ class LibroServiceImplTest {
         verify(libroRepositoryMock, never()).save(any(Libro.class));
     }
 
+    @Test
+    @DisplayName("obtenerLibroPorId con ID existente devuelve Optional con Libro")
+    void obtenerLibroPorId_cuandoLibroExiste_debeDevolverOptionalConLibro() {
+        Long idExistente = 1L;
+        when(libroRepositoryMock.findById(idExistente)).thenReturn(Optional.of(libroExistente));
+        Optional<Libro> resultadoOpt = libroService.obtenerLibroPorId(idExistente);
+        assertTrue(resultadoOpt.isPresent(), "El Optional no debería estar vacío para un ID existente.");
+        assertEquals(libroExistente, resultadoOpt.get(), "El libro devuelto no es el esperado.");
+        verify(libroRepositoryMock).findById(idExistente);
+    }
+
+    @Test
+    @DisplayName("obtenerLibroPorId con ID no existente devuelve Optional vacío")
+    void obtenerLibroPorId_cuandoLibroNoExiste_debeDevolverOptionalVacio() {
+        Long idNoExistente = 999L;
+        when(libroRepositoryMock.findById(idNoExistente)).thenReturn(Optional.empty());
+        Optional<Libro> resultadoOpt = libroService.obtenerLibroPorId(idNoExistente);
+        assertTrue(resultadoOpt.isEmpty(), "El Optional debería estar vacío para un ID no existente.");
+        verify(libroRepositoryMock).findById(idNoExistente);
+    }
+
+    @Test
+    @DisplayName("obtenerLibroPorIsbn con ISBN existente devuelve Optional con Libro")
+    void obtenerLibroPorIsbn_cuandoLibroExiste_debeDevolverOptionalConLibro() {
+
+        String isbnExistente = libroExistente.getIsbn();
+        when(libroRepositoryMock.findByIsbn(isbnExistente)).thenReturn(Optional.of(libroExistente));
+
+        Optional<Libro> resultadoOpt = libroService.obtenerLibroPorIsbn(isbnExistente);
+
+        assertTrue(resultadoOpt.isPresent(), "El Optional no debería estar vacío para un ISBN existente.");
+        assertEquals(libroExistente, resultadoOpt.get(), "El libro devuelto no es el esperado.");
+        verify(libroRepositoryMock).findByIsbn(isbnExistente);
+    }
+
+    @Test
+    @DisplayName("obtenerLibroPorIsbn con ISBN no existente devuelve Optional vacío")
+    void obtenerLibroPorIsbn_cuandoLibroNoExiste_debeDevolverOptionalVacio() {
+        String isbnNoExistente = "ISBN-INEXISTENTE-123";
+        when(libroRepositoryMock.findByIsbn(isbnNoExistente)).thenReturn(Optional.empty());
+
+        Optional<Libro> resultadoOpt = libroService.obtenerLibroPorIsbn(isbnNoExistente);
+
+        assertTrue(resultadoOpt.isEmpty(), "El Optional debería estar vacío para un ISBN no existente.");
+        verify(libroRepositoryMock).findByIsbn(isbnNoExistente);
+    }
+
+
 }
