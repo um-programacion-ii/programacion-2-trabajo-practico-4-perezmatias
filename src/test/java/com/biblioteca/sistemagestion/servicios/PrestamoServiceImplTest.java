@@ -148,8 +148,6 @@ class PrestamoServiceImplTest {
     @DisplayName("realizarPrestamo lanza IllegalArgumentException si fechaDevolucion es inválida")
     void realizarPrestamo_ConFechaDevolucionInvalida_LanzaIllegalArgumentException() {
         LocalDate fechaPasada = LocalDate.now().minusDays(1);
-        when(libroRepositoryMock.findById(libroIdExistente)).thenReturn(Optional.of(libroDisponible));
-        when(usuarioRepositoryMock.findById(usuarioIdExistente)).thenReturn(Optional.of(usuarioActivo));
 
         assertThrows(IllegalArgumentException.class, () -> {
             prestamoService.realizarPrestamo(libroIdExistente, usuarioIdExistente, fechaPasada);

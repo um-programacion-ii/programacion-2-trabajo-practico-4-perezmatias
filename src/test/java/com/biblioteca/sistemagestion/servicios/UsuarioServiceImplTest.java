@@ -80,21 +80,21 @@ class UsuarioServiceImplTest {
     }
 
     @Test
-    @DisplayName("crearUsuario lanza IllegalArgumentException si nombre es vacío")
+    @DisplayName("crearUsuario con nombre vacío lanza IllegalArgumentException desde el servicio")
     void crearUsuario_conNombreVacio_lanzaIllegalArgumentException() {
-        Usuario usuarioNombreVacio = new Usuario(" ", "vacio@example.com");
-        assertThrows(IllegalArgumentException.class, () -> {
-            usuarioService.crearUsuario(usuarioNombreVacio);
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            new Usuario(" ", "vacio.nombre@example.com");
         });
+        assertTrue(exception.getMessage().contains("nombre no puede estar vacío"));
     }
 
     @Test
-    @DisplayName("crearUsuario lanza IllegalArgumentException si email es vacío")
+    @DisplayName("crearUsuario con email vacío lanza IllegalArgumentException desde el servicio")
     void crearUsuario_conEmailVacio_lanzaIllegalArgumentException() {
-        Usuario usuarioEmailVacio = new Usuario("NombreValido", " ");
-        assertThrows(IllegalArgumentException.class, () -> {
-            usuarioService.crearUsuario(usuarioEmailVacio);
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            new Usuario("NombreValido", " ");
         });
+        assertTrue(exception.getMessage().contains("email no puede estar vacío"));
     }
 
     @Test
