@@ -177,7 +177,7 @@ class UsuarioServiceImplTest {
         datosActualizacion.setEstado(EstadoUsuario.SUSPENDIDO);
 
         when(usuarioRepositoryMock.findById(idExistente)).thenReturn(Optional.of(usuarioExistente));
-        when(usuarioRepositoryMock.findByEmail(datosActualizacion.getEmail())).thenReturn(Optional.empty()); // Nuevo email no existe
+        when(usuarioRepositoryMock.findByEmail(datosActualizacion.getEmail())).thenReturn(Optional.empty());
         when(usuarioRepositoryMock.save(any(Usuario.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         Usuario usuarioResultado = assertDoesNotThrow(() ->
@@ -214,14 +214,13 @@ class UsuarioServiceImplTest {
     @Test
     @DisplayName("actualizarUsuario con email duplicado de OTRO usuario lanza RecursoDuplicadoException")
     void actualizarUsuario_conEmailDuplicadoDeOtroUsuario_lanzaRecursoDuplicadoException() {
-        Long idUsuarioAActualizar = usuarioExistente.getId(); // ID: 1L, Email: existente.test@example.com
+        Long idUsuarioAActualizar = usuarioExistente.getId();
         Usuario otroUsuarioConEmail = new Usuario("Otro User", "nuevo.email@example.com");
-        otroUsuarioConEmail.setId(2L); // ID diferente
+        otroUsuarioConEmail.setId(2L);
 
-        Usuario datosActualizacion = new Usuario(usuarioExistente.getNombre(), "nuevo.email@example.com"); // Intentando usar el email de otroUsuarioConEmail
+        Usuario datosActualizacion = new Usuario(usuarioExistente.getNombre(), "nuevo.email@example.com");
 
         when(usuarioRepositoryMock.findById(idUsuarioAActualizar)).thenReturn(Optional.of(usuarioExistente));
-        // Simulamos que el nuevo email ya está tomado por 'otroUsuarioConEmail'
         when(usuarioRepositoryMock.findByEmail(datosActualizacion.getEmail())).thenReturn(Optional.of(otroUsuarioConEmail));
 
         RecursoDuplicadoException exception = assertThrows(RecursoDuplicadoException.class, () -> {
@@ -239,7 +238,7 @@ class UsuarioServiceImplTest {
     void eliminarUsuario_cuandoUsuarioExiste_llamaDeleteDelRepositorio() {
         Long idExistente = usuarioExistente.getId();
         when(usuarioRepositoryMock.existsById(idExistente)).thenReturn(true);
-        doNothing().when(usuarioRepositoryMock).deleteById(idExistente); // Para métodos void
+        doNothing().when(usuarioRepositoryMock).deleteById(idExistente);
 
         assertDoesNotThrow(() -> {
             usuarioService.eliminarUsuario(idExistente);
