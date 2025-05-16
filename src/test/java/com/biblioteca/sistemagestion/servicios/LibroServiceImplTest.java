@@ -205,5 +205,34 @@ class LibroServiceImplTest {
         verify(libroRepositoryMock, never()).save(any(Libro.class));
     }
 
+    @Test
+    @DisplayName("eliminarLibro cuando el libro existe llama a deleteById del repositorio")
+    void eliminarLibro_cuandoLibroExiste_llamaDeleteDelRepositorio() {
+        Long idExistente = libroExistente.getId();
+        when(libroRepositoryMock.existsById(idExistente)).thenReturn(true);
+        assertDoesNotThrow(() -> {
+            libroService.eliminarLibro(idExistente);
+        }, "eliminarLibro no debería lanzar excepción si el libro existe.");
+
+        verify(libroRepositoryMock).existsById(idExistente);
+        verify(libroRepositoryMock).deleteById(idExistente);
+    }
+
+    @Test
+    @DisplayName("eliminarLibro cuando el libro NO existe lanza LibroNoEncontradoException")
+    void eliminarLibro_cuandoLibroNoExiste_lanzaLibroNoEncontradoException() {
+        Long idNoExistente = 999L;
+        when(libroRepositoryMock.existsById(idNoExistente)).thenReturn(false);
+        LibroNoEncontradoException exception = assertThrows(LibroNoEncontradoException.class, () -> {
+            libroService.eliminarLibro(idNoExistente);
+        }, "Debería lanzarse LibroNoEncontradoException si el libro a eliminar no existe.");
+
+        assertTrue(exception.getMessage().contains(String.valueOf(idNoExistente)),
+                "El mensaje de la excepción debería contener el ID del libro no encontrado.");
+
+        verify(libroRepositoryMock).existsById(idNoExistente);
+        verify(libroRepositoryMock, never()).deleteById(anyLong());
+    }
+
 
 }
