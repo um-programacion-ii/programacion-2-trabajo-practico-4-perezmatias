@@ -5,7 +5,7 @@ import com.biblioteca.sistemagestion.modelo.EstadoLibro;
 import com.biblioteca.sistemagestion.repositorios.LibroRepository;
 import com.biblioteca.sistemagestion.excepciones.RecursoDuplicadoException;
 import com.biblioteca.sistemagestion.excepciones.LibroNoEncontradoException;
-
+import java.util.Collections;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -124,6 +124,36 @@ class LibroServiceImplTest {
 
         assertTrue(resultadoOpt.isEmpty(), "El Optional debería estar vacío para un ISBN no existente.");
         verify(libroRepositoryMock).findByIsbn(isbnNoExistente);
+    }
+
+    @Test
+    @DisplayName("obtenerTodosLosLibros cuando hay libros devuelve la lista correcta")
+    void obtenerTodosLosLibros_cuandoHayLibros_debeDevolverLista() {
+        List<Libro> listaEsperada = new ArrayList<>();
+        listaEsperada.add(libroPrueba);
+        listaEsperada.add(libroExistente);
+
+        when(libroRepositoryMock.findAll()).thenReturn(listaEsperada);
+
+        List<Libro> resultado = libroService.obtenerTodosLosLibros();
+
+        assertNotNull(resultado, "La lista devuelta no debería ser nula.");
+        assertEquals(2, resultado.size(), "El tamaño de la lista devuelta no es el esperado.");
+        assertTrue(resultado.containsAll(listaEsperada) && listaEsperada.containsAll(resultado),
+                "Las listas no contienen los mismos elementos.");
+        verify(libroRepositoryMock).findAll();
+    }
+
+    @Test
+    @DisplayName("obtenerTodosLosLibros cuando no hay libros devuelve lista vacía")
+    void obtenerTodosLosLibros_cuandoNoHayLibros_debeDevolverListaVacia() {
+        when(libroRepositoryMock.findAll()).thenReturn(Collections.emptyList());
+
+        List<Libro> resultado = libroService.obtenerTodosLosLibros();
+
+        assertNotNull(resultado, "La lista devuelta no debería ser nula.");
+        assertTrue(resultado.isEmpty(), "La lista devuelta debería estar vacía.");
+        verify(libroRepositoryMock).findAll();
     }
 
 
