@@ -191,7 +191,7 @@ class UsuarioControllerTest {
     void actualizarUsuario_conEmailDuplicadoDeOtroUsuario_DevuelveStatus409() throws Exception {
         Long idUsuarioAActualizar = usuario1.getId();
 
-        Usuario datosActualizacion = new Usuario(usuario1.getNombre(), usuario2.getEmail()); 
+        Usuario datosActualizacion = new Usuario(usuario1.getNombre(), usuario2.getEmail());
 
         when(usuarioServiceMock.actualizarUsuario(eq(idUsuarioAActualizar), Mockito.any(Usuario.class)))
                 .thenThrow(new RecursoDuplicadoException("El nuevo email '" + usuario2.getEmail() + "' ya está en uso por otro usuario."));
