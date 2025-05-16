@@ -156,5 +156,54 @@ class LibroServiceImplTest {
         verify(libroRepositoryMock).findAll();
     }
 
+    @Test
+    @DisplayName("actualizarLibro cuando el libro existe actualiza y devuelve el libro")
+    void actualizarLibro_cuandoLibroExiste_actualizaYDevuelveLibro() {
+        Long idExistente = libroExistente.getId();
+
+        Libro libroConNuevosDatos = new Libro();
+        libroConNuevosDatos.setTitulo("Título Súper Actualizado");
+        libroConNuevosDatos.setAutor("Autor Renovado");
+        libroConNuevosDatos.setEstado(EstadoLibro.EN_REPARACION);
+        Libro libroEnRepo = new Libro(libroExistente.getIsbn(), libroExistente.getTitulo(), libroExistente.getAutor());
+        libroEnRepo.setId(idExistente);
+        libroEnRepo.setEstado(libroExistente.getEstado());
+        when(libroRepositoryMock.findById(idExistente)).thenReturn(Optional.of(libroEnRepo));
+        when(libroRepositoryMock.save(any(Libro.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        Libro libroResultado = assertDoesNotThrow(() ->
+                        libroService.actualizarLibro(idExistente, libroConNuevosDatos),
+                "actualizarLibro no debería lanzar excepción si el libro existe."
+        );
+
+        assertNotNull(libroResultado, "El libro actualizado no debería ser nulo.");
+        assertEquals(idExistente, libroResultado.getId(), "El ID del libro actualizado no coincide (debería ser el original).");
+        assertEquals("Título Súper Actualizado", libroResultado.getTitulo(), "El título no se actualizó correctamente.");
+        assertEquals("Autor Renovado", libroResultado.getAutor(), "El autor no se actualizó correctamente.");
+        assertEquals(EstadoLibro.EN_REPARACION, libroResultado.getEstado(), "El estado no se actualizó correctamente.");
+        assertEquals(libroExistente.getIsbn(), libroResultado.getIsbn(), "El ISBN no debería haber cambiado.");
+
+        verify(libroRepositoryMock).findById(idExistente);
+        verify(libroRepositoryMock).save(libroEnRepo);
+    }
+
+    @Test
+    @DisplayName("actualizarLibro cuando el libro NO existe lanza LibroNoEncontradoException")
+    void actualizarLibro_cuandoLibroNoExiste_lanzaLibroNoEncontradoException() {
+        Long idNoExistente = 999L;
+        Libro libroDetalles = new Libro("ISBN-DUMMY", "Dummy Titulo", "Dummy Autor");
+        when(libroRepositoryMock.findById(idNoExistente)).thenReturn(Optional.empty());
+
+        LibroNoEncontradoException exception = assertThrows(LibroNoEncontradoException.class, () -> {
+            libroService.actualizarLibro(idNoExistente, libroDetalles);
+        }, "Debería lanzarse LibroNoEncontradoException si el libro a actualizar no existe.");
+
+        assertTrue(exception.getMessage().contains(String.valueOf(idNoExistente)),
+                "El mensaje de la excepción debería contener el ID del libro no encontrado.");
+
+        verify(libroRepositoryMock).findById(idNoExistente);
+        verify(libroRepositoryMock, never()).save(any(Libro.class));
+    }
+
 
 }
